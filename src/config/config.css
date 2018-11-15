@@ -1,0 +1,22 @@
+.text-list-container .list-wrapper {
+    border: 1px solid #EEE;
+}
+
+#added-contacts li {
+    padding: 4px;
+    cursor: default;
+}
+
+#added-contacts li div {
+    cursor: pointer;
+    float: right;
+}
+
+#searchbox-wrapper .text-list-container {
+    display: none;
+}
+
+#select-contact {
+    margin: 0px;
+    max-height: 200px;
+}
