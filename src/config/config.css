@@ -1,22 +1,61 @@
 .text-list-container .list-wrapper {
-    border: 1px solid #EEE;
+	border: 1px solid #EEE;
 }
 
 #added-contacts li {
-    padding: 4px;
-    cursor: default;
+	padding: 4px;
+	cursor: default;
 }
 
 #added-contacts li div {
-    cursor: pointer;
-    float: right;
+	cursor: pointer;
+	float: right;
 }
 
 #searchbox-wrapper .text-list-container {
-    display: none;
+	display: none;
 }
 
 #select-contact {
-    margin: 0px;
-    max-height: 200px;
+	margin: 0px;
+	max-height: 200px;
+}
+
+.hiddenData,
+#editContact {
+	display: none;
+}
+
+.ui-sortable-placeholder,
+.sortable-placeholder {
+	background-color: #ccc;
+	border: 1px solid #000;
+	visibility: visible;
+}
+
+.contactAttributeValue {
+	display: inline-block;
+	font-style: italic;
+	text-indent: 25px;
+	font-size: 12px;
+}
+
+.styled-checkbox label.checkbox-label:last-of-type {
+	width: 140px;
+}
+
+#added-contacts li .glyphicons.edit:before {
+	margin: 0 10px;
+}
+
+#editContact h3 {
+	margin: 10px 0;
+}
+
+.editableContact {
+	background-color: #eee;
+}
+
+#editContact .styled-checkbox {
+	margin-top: 10px;
 }

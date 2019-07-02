@@ -1,0 +1,40 @@
+.afContactForm.afHasNotDistrict,
+.afContactForm.afHasDistrict,
+.write-to-us-form .grecaptcha-badge {
+	display: none;
+}
+
+.afContactForm.activeDistrict {
+	display: block;
+}
+
+.positionRelative {
+	position: relative;
+}
+
+.searchResult {
+	display: none;
+	position: absolute;
+	top: 40px;
+	left: 1px;
+	right: 1px;
+	z-index: 1000;
+	min-width: 100px;
+	padding: 0;
+	margin: 0;
+	list-style: none;
+	background: #fff;
+	-webkit-box-shadow: 0 2px 5px rgba(0, 0, 0, 0.5);
+	box-shadow: 0 2px 5px rgba(0, 0, 0, 0.5);
+	border: #b5b5b5 1px solid;
+}
+
+.searchResult li {
+	padding: 10px 5px;
+}
+
+.searchResult li:hover {
+	cursor: pointer;
+	background-color: #757575;
+	color: #fff;
+}

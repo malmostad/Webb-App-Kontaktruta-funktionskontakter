@@ -1,9 +1,9 @@
 {
-   "id": "kontaktruta_webapp",
-   "version": "0.0.15",
-   "name": "Kontaktruta",
-   "author": "Bouvet Sverige AB",
-   "description": "Webapp för hantering av kontakter",
-   "helpUrl": "https://help.sitevision.se",
-   "type": "WebApp"
+    "id": "kontaktruta_webapp",
+    "version": "1.1.37",
+    "name": "Kontaktruta",
+    "author": "ÅF Digital Solutions",
+    "description": "Webapp för hantering av kontakter",
+    "helpUrl": "https://help.sitevision.se",
+    "type": "WebApp"
 }

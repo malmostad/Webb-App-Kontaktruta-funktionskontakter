@@ -1,4 +1,235 @@
+<script>
+    (function (jq) {
+
+        'use strict';
+
+        jq(window).on('load', function () {
+
+            if (<%= isOnline %>) {
+
+            setTimeout(function () {
+
+                var thisCaptcha = null,
+                    jq = jQuery;
+
+                if (thisCaptcha === null) {
+
+                    jq('.g-recaptcha').each(function (k, v) {
+
+                        var thisID = jq(this).attr('id');
+
+                        thisCaptcha = grecaptcha.render(thisID, {
+                            'sitekey': '<%= reCaptchaSiteKey %>',
+                            'callback': function (token) {
+
+                                jq('form.basic.write-to-us-form.form' + thisID)
+                                    .append('<input type="hidden" name="reCaptcha" value="' + token + '" />');
+                            }
+                        });
+
+                        grecaptcha.execute(thisCaptcha);
+                    });
+
+                } else {
+
+                    grecaptcha.reset(thisCaptcha);
+
+                }
+
+            }, 200);
+
+        }
+
+    });
+
+    }(jQuery));
+</script>
+
 <aside class="contact-us basic">
-    <h1>Kontakta oss</h1>
+    <h1>
+        <% if (isIntranat) { %>
+        <%- i18n('contactUsTitleIntranat') %>
+        <% } else { %>
+        <%- i18n('contactUsTitle') %>
+        <% } %>
+    </h1>
     <%= renderer.renderComponent('Contacts') %>
+
+    <%= renderer.renderComponent('SaveMetadata') %>
+
+    <%= renderer.renderComponent('GetMetadata') %>
+
+    <script>
+        (function (jq) {
+
+            'use strict';
+
+            function hideAllVCardExceptFirst() {
+                jq(".contact-us .vcard").not(":eq(0)").hide();
+            }
+
+            function changeDistrict(e) {
+
+                var district = e.target.value;
+
+                jq('.afContactForm.activeDistrict').removeClass('activeDistrict').closest('.vcard').hide();
+                if (district !== '0') {
+                    jq('.vcard').find('[data-district="' + district + '"]').addClass('activeDistrict').closest('.vcard').show();
+                } else {
+                    jq('.vcard').find('.afContactForm.afHasNotDistrict').addClass('activeDistrict').closest('.vcard').show();
+                }
+            }
+
+            function handleAddressResult(response) {
+
+                var addresses = response.addresses,
+                    searchResult = jq('#searchResult'),
+                    address;
+
+                searchResult.show();
+                searchResult.empty();
+
+                for (var i = 0; i < addresses.length; i++) {
+                    address = addresses[i];
+                    searchResult.append(jq('<li/>', {
+                        text: address.name,
+                        "data-district": address.towndistrict,
+                    }));
+                }
+            }
+
+            function searchAddress(e) {
+
+                var inputValue = e.target.value;
+
+                if (inputValue.length > 2) {
+                    jq.ajax({
+                        url: 'https://kartor.malmo.se/api/v1/district_from_address/',
+                        dataType: "jsonp",
+                        contentType: "application/json",
+                        jsonpCallback: 'handleAddressResult',
+                        data: {
+                            q: inputValue,
+                            items: 10,
+                            group_by: 'district',
+                            callback: 'handleAddressResult'
+                        },
+                        success: function (data, status, xhr) {
+                            handleAddressResult(data);
+                        }
+                    });
+                }
+            }
+
+            function createInputDiv(aClass, anId) {
+
+                return jq('<div/>', {
+                    class: aClass,
+                    id: anId
+                });
+            }
+
+            function createUL(aClass, anId) {
+
+                return jq('<ul/>', {
+                    class: aClass,
+                    id: anId
+                });
+            }
+
+            function createSpan() {
+
+                return jq('<span/>', {
+                    role: "status",
+                    "aria-live": "polite",
+                    class: "ui-helper-hidden-accessible"
+                });
+            }
+
+            var districts = jq('.afContactForm.afHasDistrict'),
+                selectDistrict,
+                options = [],
+                textInput,
+                form,
+                divSelect,
+                divInput,
+                ulSearchResult;
+
+            if (districts.length > 0) {
+
+                hideAllVCardExceptFirst();
+
+                divInput = createInputDiv('form-group positionRelative', '');
+                ulSearchResult = createUL('searchResult', 'searchResult');
+                divSelect = createInputDiv('form-group', '');
+
+                divInput.append(createSpan());
+                divInput.append(createSpan());
+
+                textInput = jq('<input/>', {
+                    type: 'text',
+                    class: 'form-control ui-autocomplete-input',
+                    placeholder: 'Hitta område via adress',
+                    autocomplete: 'off'
+                });
+
+                textInput.on('keyup', function (e) {
+                    searchAddress(e);
+                });
+
+                textInput.appendTo(divInput);
+
+                form = jq('<form/>', {
+                    class: 'form-inline',
+                    id: 'choose-district'
+                });
+
+                selectDistrict = jq('<select/>', {
+                    name: 'districtsSelect'
+                });
+
+                selectDistrict.on('change', function (e) {
+                    changeDistrict(e);
+                });
+
+                jq('<option/>', {
+                    text: 'Välj område',
+                    value: '0'
+                }).appendTo(selectDistrict);
+
+                jq.each(districts, function (index, district) {
+
+                    var name = jq(district).data('district');
+
+                    jq('<option/>', {
+                        text: name,
+                        value: name
+                    }).appendTo(selectDistrict);
+
+                });
+
+                ulSearchResult.appendTo(divInput);
+                form.append(divSelect);
+                form.append(divInput);
+                selectDistrict.appendTo(divSelect);
+                form.insertAfter('aside.contact-us h1');
+
+                ulSearchResult.on('click', 'li', function (e) {
+                    var elem = jq(e.target),
+                        name = elem.text(),
+                        district = elem.data('district'),
+                        inputField = elem.closest('div.form-group').find('input');
+
+                    inputField.val(name);
+                    selectDistrict.val(district);
+                    ulSearchResult.hide();
+                    selectDistrict.trigger('change');
+
+                });
+            }
+
+        }(jQuery))
+    </script>
 </aside>
+<script src="https://www.google.com/recaptcha/api.js?render=explicit" async defer></script>
+<!-- script src="https://www.google.com/recaptcha/api.js?onload=handleReCaptcha&render=explicit" async defer></script -->

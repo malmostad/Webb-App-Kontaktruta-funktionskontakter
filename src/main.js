@@ -11,7 +11,14 @@ define(function (require) {
         template: template,
 
         filterState: function (state) {
-            return _.extend({}, { contacts: state.contacts });
+            return _.extend({}, {
+                contacts: state.contacts,
+                webappURL: state.webappURL,
+                reCaptchaSiteKey: state.reCaptchaSiteKey,
+                isOnline: state.isOnline,
+                currentURL: state.currentURL,
+                isIntranat: state.isIntranat
+            });
         }
     });
 });

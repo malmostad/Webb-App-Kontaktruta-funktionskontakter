@@ -1,34 +1,38 @@
 define(function(require) {
-    'use strict'
+	'use strict';
 
-    var 
-        requester = require("JsonRequester"),
-        // Insert google reCatchpa key here
-        reCatchpaKey = "switch for recatchpa key";
+	var
+		logUtil = require('LogUtil');
 
-    return {
-        validateCatchpa: function(catchpaString) {        
-            var options = {
-                data: {
-                    secret: reCatchpaKey,
-                    response: catchpaString
-                }
-            }    
-            // Is user a robot? (reCatchpa)
-            requester.post("https://www.google.com/recaptcha/api/siteverify", options)
-            .done(function(response) {
-                if(response.success !== true) {
-                    return true
-                }            
-            })
-            .fail(function(response) {
-                return false
-            });
-        },
+	return {
+		sendMail: function(params) {
 
-        // TODO insert mail functionality from index.js here
-        sendMail: function(params) {
+			var mailUtil = require('MailUtil'),
+				mailBuilder = mailUtil.getMailBuilder(),
+				completeMessage = '',
+				sent = false,
+				to;
 
-        }
-    }
-})
+			to = params.to;
+			completeMessage = completeMessage + 'Meddelande från sidan: ' + params.currentURL + '\n\n';
+			completeMessage = completeMessage + 'Namn: ' + params.name + '\n';
+			completeMessage = completeMessage + 'Email: ' + params.email + '\n';
+			completeMessage = completeMessage + 'Telefon: ' + params.phone + '\n\n';
+			completeMessage = completeMessage + 'Meddelande:\n' + params.message + '\n';
+
+			mailBuilder.setSubject(params.subject);
+			mailBuilder.setTextMessage(completeMessage);
+			mailBuilder.addRecipient(params.to);
+
+			try {
+				sent = mailBuilder.build().send();
+			} catch (e) {
+				logUtil.error('[Kontaktruta] Could not send mail to: ' + to + ' because: ' + e);
+			}
+
+			logUtil.info('[Kontaktruta] Mail sent to: ' + to);
+
+			return sent;
+		}
+	};
+});

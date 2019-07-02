@@ -1,8 +1,7 @@
-# Webb-App-Kontaktruta-funktionskontakter
+# Webb-App-Kontaktruta
 Sitevision boilerplate used as template
 ## Setup
-* `git clone https://github.com/sitevision/webapp-boilerplate.git`
-* `cd webapp-boilerplate`
+* `checkout from git`
 * `npm install`
 * `npm run setup`
 ## Building
@@ -17,24 +16,23 @@ Sitevision boilerplate used as template
 
 ---
 
+## Dependencies
+* REST-app (https://github.com/malmostad/REST-App-Kontaktruta)
+
 ## How to use
-* Tokens required for minsida/kontaktapi insert in index.js 
-        endURL = 'app_token=[Insert_token]&app_secret=[insert_secret_key]';
-* Restapp is required for config to access minsida/kontaktapi, https://github.com/malmostad/REST-App-Kontaktruta
-* If the restapp changes name, config.js needs to reflect this by updating the variable `api` url
-* For local development (use variable `local = true` in index.js and config.js)
-* For reCaptcha to work the webapp needs: 
-    * Accesss to this script `<script src="https://www.google.com/recaptcha/api.js" async defer></script>`
-    * An account at https://www.google.com/recaptcha/, if you have reCatchpa through SiteVision you should already have an account. You need to register your domain.
-    * The contact.js file needs to have your reCatchpa siteKey added in it's state
-    * The mailModule.js, in module/server need to have the recatchpa private-key set in var `reCatchpaKey`
+This WEB-app uses one REST-app (https://github.com/malmostad/REST-App-Kontaktruta) to connecting to the contact_api (https://github.com/malmostad/intranet-dashboard/wiki/Contacts-API-v1). The WEB-app responsibility is to enable an interface for search contacts (persons or functions) and render contact information. If the restapp changes name, config.js needs to reflect this by updating the variable `api` url
+
+The REST-app requires an 'app_token' and an 'app_secret', GUI for that is in the REST-app settings
+
+## Settings
+
+### Global settings
+* REST-api URL - default window.location.origin + /rest-api/kontaktruta/
+* Metadata to save contacts - default 'kontaktrutastadsomradenV4_3'
+
+### Local settings
+* For every instance of Kontaktruta it is possible to setup contacts
 
 ## TODO
-* Adding mailtemplate and extend mail functionality
-* Stadsområden
-* If invalid recatchpa, reset the catchpa in client. Add recatchpa key in config part.
-* Meta-inheritence
-
-    
-
+* For local development (use variable `local = true` in index.js and config.js)
 

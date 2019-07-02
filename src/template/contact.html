@@ -1,192 +1,236 @@
-<!-- Namn -->
-<% if(data.hasOwnProperty("name") && data.name) { %>
-<h2 class="fn">
-    <%- data.name %>
-</h2>
-<% } %>
-
-<% if(data.hasOwnProperty("title") && data.title) { %>
-<div>
-    <%- data.title %>
-</div>
-<% } %>
-
-<!-- Skriv till oss/ email -->
-<% if(settings.indexOf("email") !== -1) { %>
-<% if(data.hasOwnProperty("email") && data.email) { %>
-
-<a href="/" data-toggle-form>
-    Skriv till oss
-</a>
-<form class="basic write-to-us-form" action="<%= getUrl('/sendmail') %>" style="display: none;">
-
-    <div class="form-group">
-        <label class="control-label" for="contact-form-name">Namn:*</label>
-        <input type="text" placeholder="Ditt för och efternamn" name="name" id="contact-form-name" class="form-control controls"
-            value="" required>
-    </div>
-
-    <div class="form-group ">
-        <label class="control-label" for="contact-form-user-email">E-post:*</label>
-        <input pattern="^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$" type="email" placeholder="Din e-postadress" name="email" id="contact-form-user-email" class="form-control controls"
-            value="" required>
-    </div>
-
-    <div class="form-group">
-        <label class="control-label" for="contact-form-phone">Telefon dagtid: *</label>
-        <input type="tel" placeholder="Ditt telefonnummer inklusive riktnummer" name="phone" id="contact-form-phone"
-            class="form-control controls" value="" required>
-    </div>
-
-    <div class="form-group">
-        <label class="control-label" for="contact-form-subject">Meddelandet avser:*</label>
-        <div class="controls">
-            <select class="form-control" id="contact-form-subject" name="subject" required>
-                <option value="">Typ av meddelande</option>
-                <option value="0">Felanmälan</option>
-                <option value="1">Fråga</option>
-                <option value="2">Annat</option>
-            </select>
-        </div>
-    </div>
-
-    <div class="form-group ">
-        <label class="control-label" for="contact-form-message">Meddelande:*</label>
-        <textarea placeholder="" class="form-control controls" rows="8" name="message" id="contact-form-message"
-            required></textarea>
-    </div>
-
-    <div class="body-copy">
-        <div class="in-focus-red">
-            <span>Vill du vara säker på att vara anonym rekommenderar vi att du istället ringer till oss. Informationen
-                du skickar via formuläret sparas i webbserverns systemlogg i 6 månader samt skickas som e-post till
-                mottagaradressen nedan. Läs mer om hur vi hanterar informationen på <a href="https://malmo.se/om-webbplatsen">https://malmo.se/om-webbplatsen</a>.</span>
-        </div>
-    </div>
-
-    <!-- ReCatcpa, need to set specific sitekey-->
-    <div class="g-recaptcha" data-sitekey="<%= recatchpa_site_key %>"></div>
-
-    <div class="form-group">
-        <span class="no-control-label"></span>
-        <div class="controls">
-            <input type="submit" class="btn btn-primary" value="Skicka in ditt meddelande">
-        </div>
-    </div>
-</form>
-
-<div>
-    E-post:
-    <span class="email">
-        <%- data.email %></span>
-</div>
-
-<% } %>
-<% } %>
-
-<!-- Fast telefon -->
-<% if(settings.indexOf("phone")  !== -1) { %>
-<% if(data.hasOwnProperty("phone") && data.phone) { %>
-<div>Tel:
-    <span class="tel">
-        <%- data.phone %></span>
-</div>
-<% } %>
-<% } %>
-
-<!-- Telefontider -->
-<% if(settings.indexOf("phone_hours") !== -1) { %>
-<% if(data.hasOwnProperty("phone_hours") && data.phone_hours) { %>
-<div>Telefontider:</div>
-<div>
-    <%- data.phone_hours %>
-</div>
-<% } %>
-<% } %>
-
-<!-- Mobil -->
-<% if(settings.indexOf("cell_phone") !== -1) { %>
-<% if(data.hasOwnProperty("cell_phone") && data.cell_phone) { %>
-<div>Mobil:
-    <span class="tel">
-        <%- data.cell_phone %></span>
-</div>
-<% } %>
-<% } %>
-
-<!-- Fax -->
-<% if(settings.indexOf("fax") !== -1) { %>
-<% if(data.hasOwnProperty("fax") && data.fax) { %>
-<div>Fax:
-    <span class="tel">
-        <%- data.fax %></span>
-</div>
-<% } %>
-<% } %>
-
-<!-- Postadress -->
-<% if(settings.indexOf("address") !== -1) { %>
-<% if(data.address || data.postal_code || data.postal_town) { %>
-<h3>Postadress</h3>
-<div class="adr">
-    <div class="fn">
-        <%- data.name %>
-    </div>
-    <% if(data.hasOwnProperty("address") && data.address) { %>
-    <div class="post-office-box">
-        <%- data.address %>
-    </div>
-    <% } %>
-    <div>
-        <% if(data.hasOwnProperty("postal_code") && data.postal_code) { %>
-        <span class="postal-code">
-            <%- data.postal_code %></span>
+<% if(district) { %>
+<div class="afContactForm afHasDistrict" data-district="<%- district %>">
+    <% } else { %>
+    <div class="afContactForm afHasNotDistrict activeDistrict">
         <% } %>
-        <% if(data.hasOwnProperty("postal_town") && data.postal_town) { %>
-        <span class="locality">
-            <%- data.postal_town %></span>
+
+        <!-- Namn -->
+        <% if(data.hasOwnProperty("name") && data.name) { %>
+        <h2 class="fn">
+            <% if (isIntranat && type && type === 1) { %>
+            <a href="https://minsida.malmo.se/users/<%= data.catalog_id %>" title="Profil"><%- data.name %></a>
+            <% } else { %>
+            <%- data.name %>
+            <% } %>
+        </h2>
+        <% } else if (data.hasOwnProperty("first_name") && data.first_name) { %>
+
+        <h2 class="fn">
+
+            <% if (isIntranat && type && type === 1) { %>
+            <a href="https://minsida.malmo.se/users/<%= data.catalog_id %>" title="Profil"><%- data.first_name %>
+                <%- data.last_name %></a>
+            <% } else { %>
+            <%- data.first_name %> <%- data.last_name %>
+            <% } %>
+        </h2>
+
         <% } %>
+
+        <% if(data.hasOwnProperty("title") && data.title && settings.indexOf("title") !== -1) { %>
+        <div>
+            <%- data.title %>
+        </div>
+        <% } %>
+
+
+
+        <!-- Skriv till oss/ email -->
+        <% if(settings.indexOf("mail") !== -1) { %>
+        <% if(data.hasOwnProperty("email") && data.email) { %>
+
+        <a href="/" data-toggle-form>
+            <%- i18n('contactUsLink') %>
+        </a>
+        <form class="basic write-to-us-form" action="<%= getUrl('/sendmail') %>" style="display: none;">
+
+            <div class="form-group">
+                <label class="control-label" for="contact-form-name">Namn:*</label>
+                <input type="text" placeholder="Ditt för och efternamn" name="name" id="contact-form-name"
+                    class="form-control controls" value="" required>
+            </div>
+
+            <div class="form-group ">
+                <label class="control-label" for="contact-form-user-email">E-post:*</label>
+                <input pattern="^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$" type="email"
+                    placeholder="Din e-postadress" name="email" id="contact-form-user-email"
+                    class="form-control controls" value="" required>
+            </div>
+
+            <div class="form-group">
+                <label class="control-label" for="contact-form-phone">Telefon dagtid: *</label>
+                <input type="tel" placeholder="Ditt telefonnummer inklusive riktnummer" name="phone"
+                    id="contact-form-phone" class="form-control controls" value="" required>
+            </div>
+
+            <div class="form-group">
+                <label class="control-label" for="contact-form-subject">Meddelandet avser:*</label>
+                <div class="controls">
+                    <select class="form-control" id="contact-form-subject" name="subject" required>
+                        <option value="">Typ av meddelande</option>
+                        <option value="0">Felanmälan</option>
+                        <option value="1">Fråga</option>
+                        <option value="2">Annat</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="form-group ">
+                <label class="control-label" for="contact-form-message">Meddelande:*</label>
+                <textarea placeholder="" class="form-control controls" rows="8" name="message" id="contact-form-message"
+                    required></textarea>
+            </div>
+
+            <div class="body-copy">
+                <div class="in-focus-red">
+                    <span>Vill du vara säker på att vara anonym rekommenderar vi att du istället ringer till oss.
+                        Informationen
+                        du skickar via formuläret sparas i webbserverns systemlogg i 6 månader samt skickas som
+                        e-post
+                        till
+                        mottagaradressen nedan. Läs mer om hur vi hanterar informationen på <a
+                            href="https://malmo.se/om-webbplatsen">https://malmo.se/om-webbplatsen</a>.</span>
+                </div>
+            </div>
+
+            <!-- ReCatcpa, need to set specific sitekey-->
+            <div class="g-recaptcha" data-sitekey="<%= reCaptchaSiteKey %>" data-size="invisible"
+                data-callback="handleReCaptcha">
+            </div>
+
+            <div><input type="hidden" name="currentURL" value="<%= currentURL %>" /></div>
+
+            <div class="form-group">
+                <span class="no-control-label"></span>
+                <div class="controls">
+                    <input type="submit" class="btn btn-primary" value="Skicka in ditt meddelande">
+                </div>
+            </div>
+        </form>
+
+        <div>
+
+
+            E-post:
+            <span class="email">
+                <% if (isIntranat) { %>
+                <a href="mailto:<%- data.email %>" title="Mailto"><%- data.email %></a>
+                <% } else { %>
+                <%- data.email %>
+                <% } %>
+            </span>
+        </div>
+
+        <% } %>
+        <% } %>
+
+        <!-- Fast telefon -->
+        <% if(settings.indexOf("telephone")  !== -1) { %>
+        <% if(data.hasOwnProperty("phone") && data.phone) { %>
+        <div>Tel:
+            <span class="tel">
+                <%- data.phone %></span>
+        </div>
+        <% } %>
+        <% } %>
+
+        <!-- Telefontider -->
+        <% if(settings.indexOf("telephoneHours") !== -1) { %>
+        <% if(data.hasOwnProperty("phone_hours") && data.phone_hours) { %>
+        <div>Telefontider:</div>
+        <div>
+            <%- data.phone_hours %>
+        </div>
+        <% } %>
+        <% } %>
+
+        <!-- Mobil -->
+        <% if(settings.indexOf("mobile") !== -1) { %>
+        <% if(data.hasOwnProperty("cell_phone") && data.cell_phone) { %>
+        <div>Mobil:
+            <span class="tel">
+                <%- data.cell_phone %></span>
+        </div>
+        <% } %>
+        <% } %>
+
+        <!-- Fax -->
+        <% if(settings.indexOf("fax") !== -1) { %>
+        <% if(data.hasOwnProperty("fax") && data.fax) { %>
+        <div>Fax:
+            <span class="tel">
+                <%- data.fax %></span>
+        </div>
+        <% } %>
+        <% } %>
+
+        <!-- Postadress -->
+        <% if(settings.indexOf("postalAddress") !== -1) { %>
+        <% if(data.address || data.postal_code || data.postal_town) { %>
+        <h3>Postadress</h3>
+        <div class="adr">
+            <div class="fn">
+                <%- data.name %>
+            </div>
+            <% if(data.hasOwnProperty("address") && data.address) { %>
+            <div class="post-office-box">
+                <%- data.address %>
+            </div>
+            <% } %>
+            <div>
+                <% if(data.hasOwnProperty("postal_code") && data.postal_code) { %>
+                <span class="postal-code">
+                    <%- data.postal_code %></span>
+                <% } %>
+                <% if(data.hasOwnProperty("postal_town") && data.postal_town) { %>
+                <span class="locality">
+                    <%- data.postal_town %></span>
+                <% } %>
+            </div>
+        </div>
+
+        <% } %>
+        <% } %>
+
+
+        <!-- Karta -->
+        <% if(settings.indexOf("visitingAddress") !== -1) { %>
+        <% if(data.hasOwnProperty("visiting") && data.visiting.hasOwnProperty("address") && data.visiting.address) { %>
+        <div class="adr">
+            <h3 class="visiting-address">Besöksadress</h3>
+            <div class="street-address">
+                <%- data.visiting.address %>
+            </div>
+            <div>
+                <a href="/" class="show-on-map m-icon-location" data-toggle-map title="<%- data.visiting.address %>">
+                    <%- i18n('contactShowOnMap') %>
+                </a>
+            </div>
+            <div class="contact-us-map" style="display: none;">
+                <iframe
+                    src="//kartor.malmo.se/init/?appid=adresskarta-v1&poi=<%- encodeURIComponent(data.visiting.address) %>"></iframe>
+            </div>
+        </div>
+        <% } %>
+        <% } %>
+
+        <% if(settings.indexOf("visitingHours") !== -1) { %>
+        <% if(data.hasOwnProperty("visiting") && data.visiting.hasOwnProperty("hours") && data.visiting.hours) { %>
+        <div>Besökstider:</div>
+        <%- data.visiting.hours %>
+        <% } %>
+        <% } %>
+
+        <!-- Hemsida -->
+        <% if(settings.indexOf("homepage") !== -1) { %>
+        <% if(data.hasOwnProperty("homepage") && data.homepage) { %>
+        <div>
+            <a href="<%- data.homepage %>"
+                title="<%- data.homepage %>  (länk till annan webbplats, öppnas i nytt fönster)" rel="external">
+                <%- i18n('contactWebpage') %>
+            </a>
+        </div>
+        <% } %>
+        <% } %>
+
     </div>
-</div>
-
-<% } %>
-<% } %>
-
-
-<!-- Karta -->
-<% if(settings.indexOf("visiting") !== -1) { %>
-<% if(data.hasOwnProperty("visiting") && data.visiting.hasOwnProperty("address") && data.visiting.address) { %>
-<div class="adr">
-    <h3 class="visiting-address">Besöksadress</h3>
-    <div class="street-address">
-        <%- data.visiting.address %>
-    </div>
-    <div>
-        <a href="/" class="show-on-map m-icon-location" data-toggle-map title="<%- data.visiting.address %>">Visa på karta</a>
-    </div>
-    <div class="contact-us-map" style="display: none;">
-        <iframe src="//kartor.malmo.se/init/?appid=adresskarta-v1&poi=<%- encodeURIComponent(data.visiting.address) %>"></iframe>
-    </div>
-</div>
-<% } %>
-<% } %>
-
-<% if(settings.indexOf("visiting_hours") !== -1) { %>
-<% if(data.hasOwnProperty("visiting") && data.visiting.hasOwnProperty("hours") && data.visiting.hours) { %>
-<div>Besökstider:</div>
-<% _.map(data.visiting.hours, function(item) { %>
-<div>
-    <%- item %>
-</div>
-<% }); %>
-<% } %>
-<% } %>
-
-<!-- Hemsida -->
-<% if(settings.indexOf("homepage") !== -1) { %>
-<% if(data.hasOwnProperty("homepage") && data.homepage) { %>
-<div>
-    <a href="<%- data.homepage %>" title="<%- data.homepage %>  (länk till annan webbplats, öppnas i nytt fönster)" rel="external">Webbsida</a>
-</div>
-<% } %>
-<% } %>
