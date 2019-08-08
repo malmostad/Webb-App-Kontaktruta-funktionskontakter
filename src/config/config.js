@@ -431,7 +431,7 @@ $(function () {
 
         } else if (anOptionValue === 'postalAddress') {
 
-            returnValue = cleanOutput(aContact.address) + ' ' + cleanOutput(aContact.postal_code) + ' ' + cleanOutput(aContact.postal_town);
+            returnValue = cleanOutput(aContact.address) + ', ' + cleanOutput(aContact.postal_code) + ' ' + cleanOutput(aContact.zip_code) + ' ' + cleanOutput(aContact.postal_town);
 
         } else if (anOptionValue === 'visitingAddress') {
 
