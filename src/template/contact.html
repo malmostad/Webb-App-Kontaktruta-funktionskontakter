@@ -39,6 +39,7 @@
         <% if(settings.indexOf("mail") !== -1) { %>
         <% if(data.hasOwnProperty("email") && data.email) { %>
 
+        <% if (settings.indexOf("hideWriteToUs") === -1) { %>
         <a href="/" data-toggle-form>
             <%- i18n('contactUsLink') %>
         </a>
@@ -108,16 +109,12 @@
             </div>
         </form>
 
+        <% } %>
+
         <div>
-
-
             E-post:
             <span class="email">
-                <% if (isIntranat) { %>
                 <a href="mailto:<%- data.email %>" title="Mailto"><%- data.email %></a>
-                <% } else { %>
-                <%- data.email %>
-                <% } %>
             </span>
         </div>
 

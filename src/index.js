@@ -21,7 +21,13 @@ var LOCAL_DEVELOPMENT = false,
         mailModule = require("/module/server/mailModule"),
         validateModule = require("/module/server/validateModule"),
         group_contacts_url,
-        employees_url;
+        employees_url,
+
+        // Hardcoded values because global settings doesn't work in webapps;
+        restAPIURL = 'https://malmo.se/rest-api/kontaktruta/',
+        reCaptchaSiteKey = '6LeHE5cUAAAAAKqoxJN3sr-aV4MBZ7aSYZ01UKoi',
+        reCaptchaSecretKey = '6LeHE5cUAAAAAIFtGLmsWbVEgdRyX_cEs1FkNyIN';
+
 
     function createSaveMetadataURL() {
         var localURL = '/';
@@ -51,6 +57,9 @@ var LOCAL_DEVELOPMENT = false,
 
     function getMetadataDefName() {
 
+        return 'kontaktrutastadsomradenV4_3';
+
+        /*
         var defName = appData.get('metadef'),
             session = require('Session');
 
@@ -59,6 +68,7 @@ var LOCAL_DEVELOPMENT = false,
         }
 
         return propertyUtil.getString(session.getNodeByIdentifier(defName), 'name', '');
+        */
     }
 
     function forceHTTP() {
@@ -100,8 +110,8 @@ var LOCAL_DEVELOPMENT = false,
     router.get('/', function (req, res) {
 
         var contactList = appData.get("contactListData"),
-            restAPIURL = appData.get('restApiURL'),
-            reCaptchaSiteKey = appData.get('recaptchaSiteKey'),
+            //restAPIURL = appData.get('restApiURL'),
+            //reCaptchaSiteKey = appData.get('recaptchaSiteKey'),
             legacyMetadata = getLegacyMetadata(),
             isOnline = require('VersionUtil').getCurrentVersion() === 1,
             currentURL = propertyUtil.getString(currentPage, 'URI', ''),
@@ -112,7 +122,14 @@ var LOCAL_DEVELOPMENT = false,
         FORCE_HTTP = forceHTTPAppData;
 
         if (!contactList) {
-            contactList = JSON.stringify(legacyMetadata.contactListData);
+            //contactList = JSON.stringify(legacyMetadata.contactListData);
+            contactList = legacyMetadata.contactListData;
+
+            if (contactList.contactListData) {
+                contactList = contactList.contactListData;
+            }
+
+            contactList = JSON.stringify(contactList);
         }
 
         group_contacts_url = restAPIURL + "group_contacts/";
@@ -255,7 +272,7 @@ var LOCAL_DEVELOPMENT = false,
         var params = req.params,
             options = {
                 data: {
-                    secret: appData.get('recaptchaSecretKey'),
+                    secret: reCaptchaSecretKey,
                     response: params.catchpa
                 }
             };

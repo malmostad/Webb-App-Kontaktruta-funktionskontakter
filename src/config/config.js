@@ -53,6 +53,11 @@ var checkboxOptions = [{
 {
     name: "Hemsida",
     value: "homepage"
+},
+
+{
+    name: "Dölj 'Skriv till oss'",
+    value: "hideWriteToUs"
 }
 ];
 

@@ -1,9 +1,9 @@
 {
     "id": "kontaktruta_webapp",
-    "version": "1.2.0",
+    "version": "1.2.13",
     "name": "Kontaktruta",
     "author": "ÅF Digital Solutions",
     "description": "Webapp för hantering av kontakter",
-    "helpUrl": "https://help.sitevision.se",
+    "helpUrl": "https://webbteam.se",
     "type": "WebApp"
 }
