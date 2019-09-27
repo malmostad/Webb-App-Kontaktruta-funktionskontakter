@@ -23,6 +23,10 @@ var checkboxOptions = [{
     value: "mail"
 },
 {
+    name: "Dölj 'Skriv till oss'",
+    value: "hideWriteToUs"
+},
+{
     name: "Fast telefon",
     value: "telephone"
 },
@@ -53,11 +57,6 @@ var checkboxOptions = [{
 {
     name: "Hemsida",
     value: "homepage"
-},
-
-{
-    name: "Dölj 'Skriv till oss'",
-    value: "hideWriteToUs"
 }
 ];
 
