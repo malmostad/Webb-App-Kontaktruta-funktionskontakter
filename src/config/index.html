@@ -1,89 +1,9 @@
-<div data-global-setting class="panel panel-default">
-    <div class="panel-heading">
-        <h3 class="panel-title">Info</h3>
-    </div>
+<script>
 
-    <div class="panel-body">
-        <div class="form-group">
-            <p style="color: red" class="normal">OBS! Värden hårdkodade i källkoden för webappen. Vissa inställningar
-                som här slår ej igenom</p>
-        </div>
-    </div>
-</div>
+    var resAPIURL = '<%= restAPIUrl %>',
+        choosenMetadataDef = '<%= choosenMetadataDefName %>';
 
-<!-- HTTP/HTTPS -->
-<div data-global-setting class="panel panel-default">
-    <div class="panel-heading">
-        <h3 class="panel-title">HTTP</h3>
-    </div>
-
-    <div class="panel-body">
-        <div class="form-group">
-            <p class="normal">Kryssa i för att tvinga http vid kommunikation med Kontakt API:et</p>
-            <label><input type="checkbox" name="forceHTTP" data-value-type="boolean" /> Tvinga http</label>
-        </div>
-    </div>
-</div>
-
-<!-- REST API -->
-<div data-global-setting class="panel panel-default">
-    <div class="panel-heading">
-        <h3 class="panel-title">REST-api URL</h3>
-    </div>
-
-    <div class="panel-body">
-        <div class="form-group">
-            <p class="normal">Fyll i den adress som REST-api:et ligger på.</p>
-            <label></label><input type="text" name="restApiURL" class="form-control" value="" />
-        </div>
-    </div>
-</div>
-
-<!-- Metadata -->
-<div data-global-setting class="panel panel-default">
-    <div class="panel-heading">
-        <h3 class="panel-title">Metadata</h3>
-    </div>
-
-    <div class="panel-body">
-        <div class="form-group">
-            <p class="normal">Välj det metadata som värden ska sparas och ärvas ifrån.</p>
-            <select class="form-control" data-component="metadata-selector" name="metadef"></select>
-        </div>
-    </div>
-</div>
-
-<!-- reCaptcha -->
-<div data-global-setting class="panel panel-default">
-    <div class="panel-heading">
-        <h3 class="panel-title">reCaptcha</h3>
-    </div>
-
-    <div class="panel-body">
-        <div class="form-group">
-            <label>Site key</label><input type="text" name="recaptchaSiteKey" class="form-control" value="" />
-        </div>
-    </div>
-    <div class="panel-body">
-        <div class="form-group">
-            <label>Secret key</label><input type="text" name="recaptchaSecretKey" class="form-control" value="" />
-        </div>
-    </div>
-</div>
-
-<!-- Setting for localhost development -->
-<!-- div class="panel panel-default">
-	<div class="panel-heading">
-		<h3 class="panel-title">Använd lokaldata</h3>
-	</div>
-
-	<div class="panel-body">
-		<div class="form-group">
-			<p class="normal">Om denna är ikryssad så används hårdkodad data. Går ej mot API:et för kontakter.</p>
-			<label><input type="checkbox" name="localDevelopmentData" data-value-type="boolean" /> Använd lokal</label>
-		</div>
-	</div>
-</div -->
+</script>
 
 <!-- Added functions/contacts -->
 <div class="panel panel-default">

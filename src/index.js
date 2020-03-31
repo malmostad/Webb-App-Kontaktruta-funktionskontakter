@@ -1,74 +1,37 @@
-// Used for local development
-var LOCAL_DEVELOPMENT = false,
-
-    // Force HTTP
-    FORCE_HTTP = false;
-
 (function () {
+
     'use strict';
 
     var
+        FORCE_HTTP = false, // Force HTTP
+
         router = require('router'),
         appData = require('appData'),
-        forceHTTPAppData = appData.get('forceHTTP'),
         i18n = require('i18n'),
         portletContextUtil = require('PortletContextUtil'),
         propertyUtil = require('PropertyUtil'),
         currentPage = portletContextUtil.getCurrentPage(),
-        currentPortlet = portletContextUtil.getCurrentPortlet(),
-        requester = require('JsonRequester'),
-        logUtil = require('LogUtil'),
+        requester = require('Requester'),
         mailModule = require("/module/server/mailModule"),
         validateModule = require("/module/server/validateModule"),
+
         group_contacts_url,
         employees_url,
 
-        // Hardcoded values because global settings doesn't work in webapps;
-        restAPIURL = 'https://malmo.se/rest-api/kontaktruta/',
-        reCaptchaSiteKey = '6LeHE5cUAAAAAKqoxJN3sr-aV4MBZ7aSYZ01UKoi',
-        reCaptchaSecretKey = '6LeHE5cUAAAAAIFtGLmsWbVEgdRyX_cEs1FkNyIN';
-
-
-    function createSaveMetadataURL() {
-        var localURL = '/';
-
-        try {
-            localURL = localURL + currentPage.getIdentifier() + '.html?sv.' +
-                currentPortlet.getIdentifier() + '.route=%2FsaveMetadata&sv.target=' + currentPortlet.getIdentifier();
-        } catch (e) {
-
-        }
-
-        return localURL;
-    }
-
-    function createGetMetadataURL() {
-        var localURL = '/';
-
-        try {
-            localURL = localURL + currentPage.getIdentifier() + '.html?sv.' +
-                currentPortlet.getIdentifier() + '.route=%2FgetMetadata&sv.target=' + currentPortlet.getIdentifier();
-        } catch (e) {
-
-        }
-
-        return localURL;
-    }
+        logUtil = require('LogUtil');
 
     function getMetadataDefName() {
 
-        return 'kontaktrutastadsomradenV4_3';
+        var
+            globalAppData = require('globalAppData'),
+            def = globalAppData.getNode('metadef');
 
-        /*
-        var defName = appData.get('metadef'),
-            session = require('Session');
-
-        if (!defName || defName === '') {
+        if (!def) {
             return 'kontaktrutastadsomradenV4_3';
         }
 
-        return propertyUtil.getString(session.getNodeByIdentifier(defName), 'name', '');
-        */
+        return def.getName();
+
     }
 
     function forceHTTP() {
@@ -109,20 +72,23 @@ var LOCAL_DEVELOPMENT = false,
 
     router.get('/', function (req, res) {
 
-        var contactList = appData.get("contactListData"),
-            //restAPIURL = appData.get('restApiURL'),
-            //reCaptchaSiteKey = appData.get('recaptchaSiteKey'),
+        var
+            contactList = appData.get("contactListData"),
+            globalAppData = require('globalAppData'),
             legacyMetadata = getLegacyMetadata(),
             isOnline = require('VersionUtil').getCurrentVersion() === 1,
             currentURL = propertyUtil.getString(currentPage, 'URI', ''),
             contacts = [],
             contactListAsJSON,
-            isIntranat = checkIsIntranat();
+            isIntranat = checkIsIntranat(),
+
+            reCaptchaSiteKey = globalAppData.get('recaptchaSiteKey'),
+            forceHTTPAppData = globalAppData.get('forceHTTP'),
+            restAPIURL = globalAppData.get('restApiURL');
 
         FORCE_HTTP = forceHTTPAppData;
 
         if (!contactList) {
-            //contactList = JSON.stringify(legacyMetadata.contactListData);
             contactList = legacyMetadata.contactListData;
 
             if (contactList.contactListData) {
@@ -137,12 +103,6 @@ var LOCAL_DEVELOPMENT = false,
         employees_url = restAPIURL + "employees/";
         //employees_url = "http://komin.test.malmo.se/rest-api/KontaktrutaRestAPI/employees/";
 
-		/*
-		if (appData.get("localDevelopmentData")) {
-			LOCAL_DEVELOPMENT = true;
-        }
-        */
-
         try {
             contactListAsJSON = JSON.parse(contactList);
         } catch (e) {
@@ -152,78 +112,49 @@ var LOCAL_DEVELOPMENT = false,
         if (contactListAsJSON) {
             contactListAsJSON.map(function (item) {
 
-                if (LOCAL_DEVELOPMENT) {
-                    var contactPerson = getFakeContact(item.id);
+                if (FORCE_HTTP) {
+                    forceHTTP();
+                }
 
-                    contacts.push({
-                        id: item.dn,
-                        settings: item.attributes,
-                        type: item.type,
-                        data: data,
-                        district: item.district || ''
+                if (item.type === 1 || item.type === '1') {
+
+                    requester.get(employees_url + item.dn).done(function (data) {
+                        contacts.push({
+                            id: item.dn,
+                            settings: item.attributes,
+                            type: item.type,
+                            data: data,
+                            district: item.district || ''
+                        });
+
+                    }).fail(function (e) {
+
+                        logUtil.error('Error requesting employees url: ' + e);
+
                     });
 
                 } else {
 
-                    if (FORCE_HTTP) {
-                        forceHTTP();
-                    }
+                    requester.get(group_contacts_url + item.dn).done(function (data) {
+                        contacts.push({
+                            id: item.dn,
+                            settings: item.attributes,
+                            type: item.type,
+                            data: data,
+                            district: item.district || ''
+                        });
 
-                    if (item.type === 1 || item.type === '1') {
+                    }).fail(function (e) {
 
-                        try {
+                        logUtil.error('Error requesting groups url: ' + e);
 
-                            requester.get(employees_url + item.dn).done(function (data) {
-                                contacts.push({
-                                    id: item.dn,
-                                    settings: item.attributes,
-                                    type: item.type,
-                                    data: data,
-                                    district: item.district || ''
-                                });
-
-                            }).fail(function (e) {
-
-                                logUtil.error('Error requesting employees url: ' + e);
-
-                            });
-
-                        } catch (e) {
-
-                        }
-
-                    } else {
-
-                        try {
-
-                            requester.get(group_contacts_url + item.dn).done(function (data) {
-                                contacts.push({
-                                    id: item.dn,
-                                    settings: item.attributes,
-                                    type: item.type,
-                                    data: data,
-                                    district: item.district || ''
-                                });
-
-                            }).fail(function (e) {
-
-                                logUtil.error('Error requesting groups url: ' + e);
-
-                            });
-
-                        } catch (e) {
-
-                        }
-                    }
+                    });
                 }
-
             });
         }
 
         res.render('/', {
             contacts: contacts,
-            webappURL: createSaveMetadataURL(),
-            getMetadataURL: createGetMetadataURL(),
             reCaptchaSiteKey: reCaptchaSiteKey,
             isOnline: isOnline,
             currentURL: currentURL,
@@ -248,28 +179,33 @@ var LOCAL_DEVELOPMENT = false,
     router.post('/saveMetadata', function (req, res) {
 
         var metadataUtil = require('MetadataUtil'),
-            session = require('Session'),
             contactListData = JSON.parse(req.params.contactListData),
-            //localDevelopmentData = req.params.localDevelopmentData,
-            metadataDefNode = session.getNodeByIdentifier(req.params.metadataDef),
-            metadatadef = propertyUtil.getString(metadataDefNode, 'name', ''),
-            valueToSave = {};
+            metadatadef = getMetadataDefName(),
+            valueToSave = {},
+            success = true;
 
         valueToSave.contactListData = contactListData;
-        //valueToSave.localDevelopmentData = localDevelopmentData;
         valueToSave.metadatadef = metadatadef;
 
         try {
             metadataUtil.setMetadataPropertyValue(currentPage, metadatadef, JSON.stringify(valueToSave));
             logUtil.error('[Kontaktruta] Values saved');
         } catch (e) {
+            success = false;
             logUtil.error('[Kontaktruta]  Could not save metadata values: ' + e);
         }
+
+        res.json({
+            success: success
+        });
     });
 
     router.post("/sendmail", function (req, res) {
 
-        var params = req.params,
+        var
+            globalAppData = require('globalAppData'),
+            reCaptchaSecretKey = globalAppData.get('recaptchaSecretKey'),
+            params = req.params,
             options = {
                 data: {
                     secret: reCaptchaSecretKey,
@@ -303,69 +239,5 @@ var LOCAL_DEVELOPMENT = false,
                 logUtil.error('[Kontaktruta] Could not send contact mail because not passing Captcha filter');
             });
     });
+
 }());
-
-function getFakeContact(value) {
-    return fakeContact().find(function (item) {
-        return item.id === value;
-    });
-}
-
-function fakeContact() {
-
-    return [{
-        "id": 1899,
-        "name": "Test",
-        "email": "",
-        "phone": "040-364 07 00",
-        "phone_hours": "",
-        "cell_phone": null,
-        "fax": "040-334 07 16",
-        "address": "Something 184",
-        "zip_code": "233 75 Tst",
-        "postal_town": null,
-        "homepage": "",
-        "created_at": "2014-12-03T10:36:40.000+01:00",
-        "updated_at": "2018-10-10T16:34:14.073+02:00",
-        "visiting": {
-            "address": "Ett ställe 184C",
-            "zip_code": "",
-            "postal_town": null,
-            "district": null,
-            "geo_position": {
-                "x": null,
-                "y": null
-            },
-            "hours": ""
-        }
-    },
-
-    {
-        "id": 1891,
-        "name": "Anders",
-        "email": "anders.israelsson@afconsult.com",
-        "phone": "040-364 07 00",
-        "phone_hours": "",
-        "cell_phone": null,
-        "fax": "040-334 07 16",
-        "address": "Something 184",
-        "zip_code": "233 75 Tst",
-        "postal_town": null,
-        "homepage": "",
-        "created_at": "2014-12-03T10:36:40.000+01:00",
-        "updated_at": "2018-10-10T16:34:14.073+02:00",
-        "visiting": {
-            "address": "Ett ställe 184C",
-            "zip_code": "",
-            "postal_town": null,
-            "district": null,
-            "geo_position": {
-                "x": null,
-                "y": null
-            },
-            "hours": ""
-        }
-    },
-
-    ];
-};

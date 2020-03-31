@@ -14,8 +14,6 @@ define(function (require) {
 
         className: "vcard",
 
-        //template: template,
-
         getTemplate: function () {
 
             if (this.state.layout === 'mailSent') {

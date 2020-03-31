@@ -1,6 +1,7 @@
 .afContactForm.afHasNotDistrict,
 .afContactForm.afHasDistrict,
-.write-to-us-form .grecaptcha-badge {
+.write-to-us-form .grecaptcha-badge,
+.aria-error_msg {
 	display: none;
 }
 

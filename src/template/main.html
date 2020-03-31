@@ -1,9 +1,18 @@
 <script>
+
+    var getMetadataURL = '<%= getStandaloneUrl("/getMetadata") %>',
+        webappURL = '<%= getStandaloneUrl("/saveMetadata") %>';
+
+
     (function (jq) {
 
         'use strict';
 
         jq(window).on('load', function () {
+
+            var script = document.createElement('script');
+            script.src = '<%- getResourceUrl("custom.js") %>';
+            document.head.appendChild(script);
 
             if (<%= isOnline %>) {
 
@@ -53,11 +62,8 @@
         <%- i18n('contactUsTitle') %>
         <% } %>
     </h1>
+
     <%= renderer.renderComponent('Contacts') %>
-
-    <%= renderer.renderComponent('SaveMetadata') %>
-
-    <%= renderer.renderComponent('GetMetadata') %>
 
     <script>
         (function (jq) {
@@ -232,4 +238,3 @@
     </script>
 </aside>
 <script src="https://www.google.com/recaptcha/api.js?render=explicit" async defer></script>
-<!-- script src="https://www.google.com/recaptcha/api.js?onload=handleReCaptcha&render=explicit" async defer></script -->

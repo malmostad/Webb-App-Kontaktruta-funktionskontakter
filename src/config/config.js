@@ -1,17 +1,5 @@
-//Set to true to use fakedata
-var LOCAL_DEVELOPMENT = false,
-
-    // Force HTTP
-    FORCE_HTTP = false;
-
-// The restApp location and endpoints
-var api,
-    group_contacts_url,
-    employees_url;
-
 var contactList = [],
     typeOfContactValue = 'personContakt';
-//i18n = require('i18n');
 
 // Checkboxoptions for choosing what to use for a contact
 var checkboxOptions = [{
@@ -61,7 +49,6 @@ var checkboxOptions = [{
 ];
 
 
-
 $(function () {
 
     'use strict';
@@ -71,26 +58,12 @@ $(function () {
         selectContact,
         contactOptions,
         hiddenContactDataElem,
-        addedContacts,
-        //localDevelopment,
-        //$localDevelopment,
-        restApiURL,
-        metadataSelector,
-        reCaptchaSiteKey,
-        reCaptchaSecretKey,
-        forceHttp,
-        $forceHttp;
+        addedContacts;
 
     // Sitevision overide, populates elements with data when configuration is loaded
     window.setValues = function (values) {
 
         var contacts = values.contactListData,
-            //runLocal = values.localDevelopmentData,
-            forceHttpValue = values.forceHTTP,
-            metadataDef = values.metadef,
-            restApiURLValue = values.restApiURL,
-            reCaptchaSiteKeyStored = values.recaptchaSiteKey,
-            reCaptchaSecretKeyStored = values.recaptchaSecretKey,
             legacyMetadata;
 
         if (!contacts || contacts.length < 1) {
@@ -120,49 +93,6 @@ $(function () {
             });
         }
 
-        if (forceHttpValue) {
-            //$forceHttp.prop('checked', true);
-            document.querySelector('input[name="forceHTTP"]').checked = true;
-            FORCE_HTTP = true;
-        } else {
-            $forceHttp.prop('checked', false);
-        }
-
-		/*
-		if (runLocal) {
-			$localDevelopment.prop('checked', true);
-			LOCAL_DEVELOPMENT = true;
-		} else {
-			$localDevelopment.prop('checked', false);
-        }
-        */
-
-        // Metadata ----
-        if (metadataDef) {
-            $(metadataSelector).val(metadataDef).trigger('change');
-        } else {
-            $(metadataSelector).val('kontaktrutastadsomradenV4_3').trigger('change');
-        }
-
-        // Global settings
-        if (restApiURLValue) {
-            restApiURL.value = restApiURLValue;
-        } else {
-            restApiURL.value = window.location.origin + "/rest-api/kontaktruta/";
-        }
-
-        if (reCaptchaSiteKeyStored) {
-            $(reCaptchaSiteKey).val(reCaptchaSiteKeyStored);
-        }
-
-        if (reCaptchaSecretKeyStored) {
-            $(reCaptchaSecretKey).val(reCaptchaSecretKeyStored)
-        }
-
-        api = restApiURL.value;
-        group_contacts_url = api + "group_contacts/";
-        employees_url = api + "employees/";
-
         //window._setVsalues(values);
     };
 
@@ -185,63 +115,10 @@ $(function () {
     // Sitevision overide, retrieves values from elements that will be sent to the serve
     window.getValues = function () {
 
-        var values = {},
-            checked,
-            inputValue;
+        var values = {};
 
         if (hiddenContactDataElem) {
             values = addValue(values, hiddenContactDataElem.name, hiddenContactDataElem.value);
-        }
-
-        // Global settings
-        if (forceHttp) {
-
-            checked = forceHttp.checked;
-            inputValue = forceHttp.value;
-
-            if (forceHttp.getAttribute('data-value-type') === 'boolean') {
-                values = addValue(values, forceHttp.name, checked);
-            } else if (inputValue) {
-                if (checked) {
-                    values = addValue(values, forceHttp.name, inputValue);
-                } else {
-                    values = addValue(values, forceHttp.name, null);
-                }
-            }
-        }
-
-        if (restApiURL) {
-            values = addValue(values, restApiURL.name, restApiURL.value);
-        }
-
-        if (reCaptchaSiteKey && reCaptchaSiteKey.value) {
-            values = addValue(values, reCaptchaSiteKey.name, reCaptchaSiteKey.value);
-        }
-
-        if (reCaptchaSecretKey && reCaptchaSecretKey.value) {
-            values = addValue(values, reCaptchaSecretKey.name, reCaptchaSecretKey.value);
-        }
-
-		/*
-		if (localDevelopment) {
-
-			checked = localDevelopment.checked;
-			inputValue = localDevelopment.value;
-
-			if (localDevelopment.getAttribute('data-value-type') === 'boolean') {
-				values = addValue(values, localDevelopment.name, checked);
-			} else if (inputValue) {
-				if (checked) {
-					values = addValue(values, localDevelopment.name, inputValue);
-				} else {
-					values = addValue(values, localDevelopment.name, null);
-				}
-			}
-        }
-        */
-
-        if (metadataSelector) {
-            values = addValue(values, metadataSelector.name, $(metadataSelector).val());
         }
 
         // Save values to metadata for "Kontaktruta"
@@ -268,8 +145,7 @@ $(function () {
             dataType: 'json',
             data: {
                 contactListData: aValues.contactListData,
-                //localDevelopmentData: aValues.localDevelopmentData,
-                metadataDef: aValues.metadef
+                metadataDef: choosenMetadataDef
             }
 
         });
@@ -285,106 +161,6 @@ $(function () {
         if (sessionStorage.getItem(anKey) === null) {
             sessionStorage.setItem(anKey, JSON.stringify(aValue));
         }
-    }
-
-    function fakeContacts() {
-
-        return [{
-            "id": 1899,
-            "name": "Test",
-            "email": "",
-            "phone": "040-364 07 00",
-            "phone_hours": "",
-            "cell_phone": null,
-            "fax": "040-334 07 16",
-            "address": "Something 184",
-            "zip_code": "233 75 Tst",
-            "postal_town": null,
-            "homepage": "",
-            "created_at": "2014-12-03T10:36:40.000+01:00",
-            "updated_at": "2018-10-10T16:34:14.073+02:00",
-            "visiting": {
-                "address": "Ett ställe 184C",
-                "zip_code": "",
-                "postal_town": null,
-                "district": null,
-                "geo_position": {
-                    "x": null,
-                    "y": null
-                },
-                "hours": ""
-            }
-        },
-
-        {
-            "id": 1891,
-            "name": "Anders",
-            "email": "anders.israelsson@afconsult.com",
-            "phone": "040-364 07 00",
-            "phone_hours": "",
-            "cell_phone": null,
-            "fax": "040-334 07 16",
-            "address": "Something 184",
-            "zip_code": "233 75 Tst",
-            "postal_town": null,
-            "homepage": "",
-            "created_at": "2014-12-03T10:36:40.000+01:00",
-            "updated_at": "2018-10-10T16:34:14.073+02:00",
-            "visiting": {
-                "address": "Ett ställe 184C",
-                "zip_code": "",
-                "postal_town": null,
-                "district": null,
-                "geo_position": {
-                    "x": null,
-                    "y": null
-                },
-                "hours": ""
-            }
-        },
-
-        {
-            "id": 1539,
-            "name": "Testing",
-            "email": "",
-            "phone": "040-364 07 00",
-            "phone_hours": "",
-            "cell_phone": null,
-            "fax": "040-334 07 16",
-            "address": "Something 184",
-            "zip_code": "233 75 Tst",
-            "postal_town": null,
-            "homepage": "",
-            "created_at": "2014-12-03T10:36:40.000+01:00",
-            "updated_at": "2018-10-10T16:34:14.073+02:00",
-            "visiting": {
-                "address": "Ett ställe 184C",
-                "zip_code": "",
-                "postal_town": null,
-                "district": null,
-                "geo_position": {
-                    "x": null,
-                    "y": null
-                },
-                "hours": ""
-            }
-        },
-
-        ];
-    }
-
-    function getFakeContactWithAnId(anId) {
-        return fakeContacts().find(function (item) {
-            return item.id === anId;
-        });
-    }
-
-    function getFakeContactsWithAName(aName) {
-        var regex = new RegExp(aName, "ig");
-
-        return fakeContacts().filter(function (item) {
-            return regex.test(item.name);
-        });
     }
 
     function clearContactOptions() {
@@ -575,31 +351,26 @@ $(function () {
 
     function getContact(anUserId, anUserType) {
 
-        if (!LOCAL_DEVELOPMENT) {
+        var group_contacts_url = resAPIURL + "group_contacts/",
+            employees_url = resAPIURL + "employees/";
 
-            if (typeOfContactValue === 'personContakt') {
+        if (typeOfContactValue === 'personContakt') {
 
-                $.get(employees_url + encodeURIComponent(anUserId)).done(function (data) {
-                    renderCheckboxes(data, anUserType);
-                }).fail(function () {
-                    alert("Fail");
-                    return [];
-                });
-
-            } else {
-
-                $.get(group_contacts_url + encodeURIComponent(anUserId)).done(function (data) {
-                    renderCheckboxes(data, anUserType);
-                }).fail(function () {
-                    alert("Fail");
-                    return [];
-                });
-
-            }
+            $.get(employees_url + encodeURIComponent(anUserId)).done(function (data) {
+                renderCheckboxes(data, anUserType);
+            }).fail(function () {
+                alert("Fail");
+                return [];
+            });
 
         } else {
-            //Fake data, for testing
-            renderCheckboxes(getFakeContactWithAnId(anUserId), '1');
+
+            $.get(group_contacts_url + encodeURIComponent(anUserId)).done(function (data) {
+                renderCheckboxes(data, anUserType);
+            }).fail(function () {
+                alert("Fail");
+                return [];
+            });
         }
     }
 
@@ -609,34 +380,29 @@ $(function () {
     }
 
     function getContacts(value) {
-        var users;
+
+        var group_contacts_url = resAPIURL + "group_contacts/",
+            employees_url = resAPIURL + "employees/";
 
         if (value.length < 3) {
             $("#searchbox-wrapper .text-list-container").hide();
             return;
         }
 
-        if (!LOCAL_DEVELOPMENT) {
-
-            if (typeOfContactValue === 'personContakt') {
-                $.get(employees_url + "search/" + encodeURIComponent(value)).done(function (data) {
-                    renderContacts(data);
-                }).fail(function (xhr, status, error) {
-                    alert("Something went wrong! Message: " + error);
-                    renderContacts([]);
-                });
-            } else {
-                $.get(group_contacts_url + "search/" + encodeURIComponent(value)).done(function (data) {
-                    renderContacts(data);
-                }).fail(function (xhr, status, error) {
-                    alert("Something went wrong! Message: " + error);
-                    renderContacts([]);
-                });
-            }
+        if (typeOfContactValue === 'personContakt') {
+            $.get(employees_url + "search/" + encodeURIComponent(value)).done(function (data) {
+                renderContacts(data);
+            }).fail(function (xhr, status, error) {
+                alert("Something went wrong! Message: " + error);
+                renderContacts([]);
+            });
         } else {
-            //Fake data, for testing
-            users = getFakeContactsWithAName(value);
-            renderContacts(users);
+            $.get(group_contacts_url + "search/" + encodeURIComponent(value)).done(function (data) {
+                renderContacts(data);
+            }).fail(function (xhr, status, error) {
+                alert("Something went wrong! Message: " + error);
+                renderContacts([]);
+            });
         }
     }
 
@@ -659,7 +425,9 @@ $(function () {
 
     function editAction(anContactIndex) {
 
-        var contactPerson = contactList[anContactIndex];
+        var contactPerson = contactList[anContactIndex],
+            group_contacts_url = resAPIURL + "group_contacts/",
+            employees_url = resAPIURL + "employees/";;
 
         if (parseInt(contactPerson.type) === 1) {
             $.get(employees_url + encodeURIComponent(contactPerson.dn)).done(function (data) {
@@ -709,28 +477,12 @@ $(function () {
         selectContact = $("#select-contact");
         contactOptions = $("#contact-options");
         addedContacts = $("#added-contacts");
-        //localDevelopment = document.querySelector('input[name="localDevelopmentData"]');
         hiddenContactDataElem = document.querySelector('textarea.addedContactsAsString');
-        //$localDevelopment = $(localDevelopment);
-        metadataSelector = document.querySelector('select[name="metadef"]');
-        restApiURL = document.querySelector('input[name="restApiURL"]');
-        reCaptchaSiteKey = document.querySelector('input[name="recaptchaSiteKey"]');
-        reCaptchaSecretKey = document.querySelector('input[name="recaptchaSecretKey"]');
-        forceHttp = document.querySelector('input[name="forceHTTP"]');
-        $forceHttp = $(forceHttp);
-
 
         $('input[name="typeOfContact"]').on('change', function (e) {
 
             typeOfContactValue = this.value;
         });
-
-		/*
-		$localDevelopment.on('change', function() {
-
-			LOCAL_DEVELOPMENT = this.checked;
-        });
-        */
 
         function arraymove(arr, fromIndex, toIndex) {
             var element = arr[fromIndex];
