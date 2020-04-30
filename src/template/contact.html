@@ -43,53 +43,61 @@
         <a href="/" data-toggle-form>
             <%- i18n('contactUsLink') %>
         </a>
+
+        <% var uniqueId = generateId() %>
+
         <form class="basic write-to-us-form" action="<%= getUrl('/sendmail') %>" style="display: none;">
 
             <div class="form-group">
-                <label class="control-label" for="contact-form-name">Namn:*</label>
-                <input type="text" placeholder="Ditt för och efternamn" name="name" id="contact-form-name"
-                    class="form-control controls" value="" aria-required="true" aria-invalid="true"
-                    aria-describedby="write-to-us-err_name" required>
-                <span class="aria-error_msg" id="write-to-us-err_name">Du måste ange ett namn!</span>
+                <label class="control-label" for="contact-form-name_<%- uniqueId %>">Namn:*</label>
+                <input type="text" placeholder="Ditt för och efternamn" name="name"
+                    id="contact-form-name_<%- uniqueId %>" class="form-control controls" value="" aria-required="true"
+                    aria-invalid="true" aria-describedby="write-to-us-err_name_<%- uniqueId %>" required>
+                <span class="aria-error_msg" id="write-to-us-err_name_<%- uniqueId %>">Du måste ange ett namn!</span>
             </div>
 
             <div class="form-group ">
-                <label class="control-label" for="contact-form-user-email">E-post:*</label>
+                <label class="control-label" for="contact-form-user-email_<%- uniqueId %>">E-post:*</label>
                 <input pattern="^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$" type="email"
-                    placeholder="Din e-postadress" name="email" id="contact-form-user-email"
+                    placeholder="Din e-postadress" name="email" id="contact-form-user-email_<%- uniqueId %>"
                     class="form-control controls" value="" aria-required="true" aria-invalid="true"
-                    aria-describedby="write-to-us-err_mail" required>
-                <span class="aria-error_msg" id="write-to-us-err_mail">Du måste ange en mailadress!</span>
+                    aria-describedby="write-to-us-err_mail_<%- uniqueId %>" required>
+                <span class="aria-error_msg" id="write-to-us-err_mail_<%- uniqueId %>">Du måste ange en
+                    mailadress!</span>
             </div>
 
             <div class="form-group">
-                <label class="control-label" for="contact-form-phone">Telefon dagtid: *</label>
+                <label class="control-label" for="contact-form-phone_<%- uniqueId %>">Telefon dagtid: *</label>
                 <input type="tel" placeholder="Ditt telefonnummer inklusive riktnummer" name="phone"
-                    id="contact-form-phone" class="form-control controls" value="" aria-required="true"
-                    aria-invalid="true" aria-describedby="write-to-us-err_phone" required>
-                <span class="aria-error_msg" id="write-to-us-err_phone">Du måste ange ett telefonnummer!</span>
+                    id="contact-form-phone_<%- uniqueId %>" class="form-control controls" value="" aria-required="true"
+                    aria-invalid="true" aria-describedby="write-to-us-err_phone_<%- uniqueId %>" required>
+                <span class="aria-error_msg" id="write-to-us-err_phone_<%- uniqueId %>">Du måste ange ett
+                    telefonnummer!</span>
             </div>
 
             <div class="form-group">
-                <label class="control-label" for="contact-form-subject">Meddelandet avser:*</label>
+                <label class="control-label" for="contact-form-subject_<%- uniqueId %>">Meddelandet avser:*</label>
                 <div class="controls">
-                    <select class="form-control" id="contact-form-subject" name="subject" aria-required="true"
-                        aria-invalid="true" aria-describedby="write-to-us-err_subject" required>
+                    <select class="form-control" id="contact-form-subject_<%- uniqueId %>" name="subject"
+                        aria-required="true" aria-invalid="true"
+                        aria-describedby="write-to-us-err_subject_<%- uniqueId %>" required>
                         <option value="">Typ av meddelande</option>
                         <option value="0">Felanmälan</option>
                         <option value="1">Fråga</option>
                         <option value="2">Annat</option>
                     </select>
-                    <span class="aria-error_msg" id="write-to-us-err_subject">Du måste ange ett ämne!</span>
+                    <span class="aria-error_msg" id="write-to-us-err_subject_<%- uniqueId %>">Du måste ange ett
+                        ämne!</span>
                 </div>
             </div>
 
             <div class="form-group ">
-                <label class="control-label" for="contact-form-message">Meddelande:*</label>
+                <label class="control-label" for="contact-form-message_<%- uniqueId %>">Meddelande:*</label>
                 <textarea placeholder="Ditt meddelande..." class="form-control controls" rows="8" name="message"
-                    id="contact-form-message" aria-required="true" aria-invalid="true"
-                    aria-describedby="write-to-us-err_message" required></textarea>
-                <span class="aria-error_msg" id="write-to-us-err_message">Du måste ange ett meddelande!</span>
+                    id="contact-form-message_<%- uniqueId %>" aria-required="true" aria-invalid="true"
+                    aria-describedby="write-to-us-err_message_<%- uniqueId %>" required></textarea>
+                <span class="aria-error_msg" id="write-to-us-err_message_<%- uniqueId %>">Du måste ange ett
+                    meddelande!</span>
             </div>
 
             <div class="body-copy">

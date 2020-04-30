@@ -159,7 +159,10 @@
                 form,
                 divSelect,
                 divInput,
-                ulSearchResult;
+                ulSearchResult,
+
+                label,
+                labelDiv;
 
             if (districts.length > 0) {
 
@@ -190,6 +193,16 @@
                     id: 'choose-district'
                 });
 
+                labelDiv = jq('<div/>', {
+
+                });
+
+                label = jq('<label/>', {
+                    class: 'control-label',
+                    for: 'districtsSelect',
+                    text: 'Hitta kontakt via adress eller område:'
+                });
+
                 selectDistrict = jq('<select/>', {
                     name: 'districtsSelect'
                 });
@@ -213,6 +226,10 @@
                     }).appendTo(selectDistrict);
 
                 });
+
+
+                labelDiv.append(label);
+                form.append(labelDiv);
 
                 ulSearchResult.appendTo(divInput);
                 form.append(divSelect);

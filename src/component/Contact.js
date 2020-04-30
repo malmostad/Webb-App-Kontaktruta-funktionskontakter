@@ -50,6 +50,14 @@ define(function (require) {
             });
         },
 
+        templateFunctions: function () {
+            return {
+                generateId: function () {
+                    return new Date().getTime() + Math.floor(Math.random() * Math.floor(1000));
+                }
+            };
+        },
+
         handleSubmitButton: function (event) {
 
             event.preventDefault();
