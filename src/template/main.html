@@ -90,18 +90,37 @@
 
                 var addresses = response.addresses,
                     searchResult = jq('#searchResult'),
+                    statusDiv = jq('#af-additions'),
                     address;
+
+                if (statusDiv.length) {
+                    statusDiv.remove();
+                }
 
                 searchResult.show();
                 searchResult.empty();
+
+                searchResult.attr('aria-expanded', 'true');
+                searchResult.attr('role', 'listbox');
 
                 for (var i = 0; i < addresses.length; i++) {
                     address = addresses[i];
                     searchResult.append(jq('<li/>', {
                         text: address.name,
                         "data-district": address.towndistrict,
+                        role: "option"
                     }));
                 }
+
+                jq('<div/>', {
+                    id: 'af-additions',
+                    class: 'af-hidden',
+                    role: 'status',
+                    "aria-relevant": "additions",
+                    "aria-live": "assertive",
+                    text: 'Det finns:' + addresses.length + ' sökträffar.'
+                }).insertAfter(searchResult);
+
             }
 
             function searchAddress(e) {
@@ -162,7 +181,9 @@
                 ulSearchResult,
 
                 label,
-                labelDiv;
+                labelDiv,
+                searchLabel,
+                searchLabelDiv;
 
             if (districts.length > 0) {
 
@@ -176,6 +197,7 @@
                 divInput.append(createSpan());
 
                 textInput = jq('<input/>', {
+                    id: 'districtsSearchInput',
                     type: 'text',
                     class: 'form-control ui-autocomplete-input',
                     placeholder: 'Hitta område via adress',
@@ -183,28 +205,92 @@
                 });
 
                 textInput.on('keyup', function (e) {
-                    searchAddress(e);
+
+                    //searchAddress(e);
+
+                    switch (e.keyCode) {
+
+                        case 13:
+
+                            var activeSuggestion = jq('.activeSuggestion'),
+                                name = activeSuggestion.text(),
+                                district = activeSuggestion.data('district'),
+                                inputField = activeSuggestion.closest('div.form-group').find('input');
+
+                            e.preventDefault();
+
+                            if (activeSuggestion) {
+                                inputField.val(name);
+                                selectDistrict.val(district);
+                                ulSearchResult.hide();
+                                selectDistrict.trigger('change');
+                            }
+
+                            return false;
+
+                        case 38:
+                            // User pressed "up" arrow
+                            var activeSuggestion = jq('.activeSuggestion');
+
+                            if (activeSuggestion.length && activeSuggestion.length > 0) {
+                                activeSuggestion.prev().addClass('activeSuggestion');
+                                activeSuggestion.removeClass('activeSuggestion');
+                            } else {
+                                jq('#searchResult li').last().addClass('activeSuggestion');
+                            }
+
+                            break;
+
+                        case 40:
+                            // User pressed "down" arrow
+                            var activeSuggestion = jq('.activeSuggestion');
+
+                            if (activeSuggestion.length && activeSuggestion.length > 0) {
+                                activeSuggestion.next().addClass('activeSuggestion');
+                                activeSuggestion.removeClass('activeSuggestion');
+                            } else {
+                                jq('#searchResult li').first().addClass('activeSuggestion');
+                            }
+                            break;
+                        default:
+                            searchAddress(e);
+                    }
+
                 });
 
                 textInput.appendTo(divInput);
 
                 form = jq('<form/>', {
                     class: 'form-inline',
-                    id: 'choose-district'
+                    id: 'choose-district',
+                    submit: function (e) {
+                        e.preventDefault();
+                        return false;
+                    }
                 });
 
                 labelDiv = jq('<div/>', {
-
+                    style: 'display: inline-block;width: 20%;'
                 });
 
                 label = jq('<label/>', {
                     class: 'control-label',
                     for: 'districtsSelect',
-                    text: 'Hitta kontakt via adress eller område:'
+                    text: 'Välj via område:'
+                });
+
+                searchLabelDiv = jq('<div/>', {
+                    style: 'display: inline-block;width: 77%;'
+                });
+
+                searchLabel = jq('<label/>', {
+                    for: 'districtsSearchInput',
+                    text: 'Sök via adress:'
                 });
 
                 selectDistrict = jq('<select/>', {
-                    name: 'districtsSelect'
+                    name: 'districtsSelect',
+                    id: 'districtsSelect'
                 });
 
                 selectDistrict.on('change', function (e) {
@@ -227,9 +313,10 @@
 
                 });
 
-
+                searchLabelDiv.append(searchLabel);
                 labelDiv.append(label);
                 form.append(labelDiv);
+                form.append(searchLabelDiv);
 
                 ulSearchResult.appendTo(divInput);
                 form.append(divSelect);

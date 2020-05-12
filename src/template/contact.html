@@ -40,7 +40,7 @@
         <% if(data.hasOwnProperty("email") && data.email) { %>
 
         <% if (settings.indexOf("hideWriteToUs") === -1) { %>
-        <a href="/" data-toggle-form>
+        <a href="/" title="Visa kontaktformulär" data-toggle-form>
             <%- i18n('contactUsLink') %>
         </a>
 
@@ -50,7 +50,7 @@
 
             <div class="form-group">
                 <label class="control-label" for="contact-form-name_<%- uniqueId %>">Namn:*</label>
-                <input type="text" placeholder="Ditt för och efternamn" name="name"
+                <input type="text" placeholder="Ditt för och efternamn" name="name" autocomplete="name"
                     id="contact-form-name_<%- uniqueId %>" class="form-control controls" value="" aria-required="true"
                     aria-invalid="true" aria-describedby="write-to-us-err_name_<%- uniqueId %>" required>
                 <span class="aria-error_msg" id="write-to-us-err_name_<%- uniqueId %>">Du måste ange ett namn!</span>
@@ -59,16 +59,17 @@
             <div class="form-group ">
                 <label class="control-label" for="contact-form-user-email_<%- uniqueId %>">E-post:*</label>
                 <input pattern="^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$" type="email"
-                    placeholder="Din e-postadress" name="email" id="contact-form-user-email_<%- uniqueId %>"
-                    class="form-control controls" value="" aria-required="true" aria-invalid="true"
-                    aria-describedby="write-to-us-err_mail_<%- uniqueId %>" required>
+                    placeholder="Din e-postadress" name="email" autocomplete="email"
+                    id="contact-form-user-email_<%- uniqueId %>" class="form-control controls" value=""
+                    aria-required="true" aria-invalid="true" aria-describedby="write-to-us-err_mail_<%- uniqueId %>"
+                    required>
                 <span class="aria-error_msg" id="write-to-us-err_mail_<%- uniqueId %>">Du måste ange en
                     mailadress!</span>
             </div>
 
             <div class="form-group">
                 <label class="control-label" for="contact-form-phone_<%- uniqueId %>">Telefon dagtid: *</label>
-                <input type="tel" placeholder="Ditt telefonnummer inklusive riktnummer" name="phone"
+                <input type="tel" placeholder="Ditt telefonnummer inklusive riktnummer" name="phone" autocomplete="tel"
                     id="contact-form-phone_<%- uniqueId %>" class="form-control controls" value="" aria-required="true"
                     aria-invalid="true" aria-describedby="write-to-us-err_phone_<%- uniqueId %>" required>
                 <span class="aria-error_msg" id="write-to-us-err_phone_<%- uniqueId %>">Du måste ange ett
@@ -132,7 +133,8 @@
         <div>
             E-post:
             <span class="email">
-                <a href="mailto:<%- data.email %>" title="Mailto"><%- data.email %></a>
+                <a href="mailto:<%- data.email %>"
+                    title="Skicka meddelande till <%- data.email %>"><%- data.email %></a>
             </span>
         </div>
 
@@ -223,12 +225,13 @@
                 <%- data.visiting.address %>
             </div>
             <div>
-                <a href="/" class="show-on-map m-icon-location" data-toggle-map title="<%- data.visiting.address %>">
+                <a href="/" class="show-on-map m-icon-location" data-toggle-map
+                    title="Visa <%- data.visiting.address %> på karta">
                     <%- i18n('contactShowOnMap') %>
                 </a>
             </div>
             <div class="contact-us-map" style="display: none;">
-                <iframe
+                <iframe title="Visa på karta"
                     src="//kartor.malmo.se/init/?appid=adresskarta-v1&poi=<%- encodeURIComponent(data.visiting.address) %>"></iframe>
             </div>
         </div>
